@@ -1,7 +1,3 @@
-locals {
-  region = "asia-east1"
-}
-
 data "google_compute_image" "default" {
   family  = "ubuntu-2004-lts"
   project = "ubuntu-os-cloud"
@@ -10,7 +6,7 @@ data "google_compute_image" "default" {
 resource "random_id" "instance_template" {
   byte_length = 2
   keepers = {
-    version = 5
+    version = 6
   }
 }
 
@@ -24,9 +20,9 @@ resource "google_compute_instance_template" "default" {
     environment = var.env
   }
 
-  region = local.region
+  region = var.region
   network_interface {
-    subnetwork = "asia-east1-5418"
+    subnetwork = var.subnetwork
     access_config {
       # add this block to get public ip even it is empty
     }
@@ -77,7 +73,7 @@ resource "google_compute_region_instance_group_manager" "default" {
   name               = "${var.name}-igm"
   base_instance_name = "${var.name}-igm"
   target_size        = 5
-  region             = local.region
+  region             = var.region
 
   named_port {
     name = "http"
